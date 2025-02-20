@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import New from './pages/New';
 import Diary  from "./pages/Diary";
 import NotFound from "./pages/NotFound";
+import Button from "./components/button.jsx";
+import Header from "./components/header.jsx";
 
 //최적화를 위함.
 //public 폴더에서 직접 불러오면 브라우저 메모리에 캐싱되지 않음.
@@ -29,13 +31,26 @@ function App() {
 
     return (
         <>
-            <div className="">
-                <img src={getEmotionImage(1)} alt="1"/>
-                <img src={getEmotionImage(2)} alt="2"/>
-                <img src={getEmotionImage(3)} alt="3"/>
-                <img src={getEmotionImage(4)} alt="4"/>
-                <img src={getEmotionImage(5)} alt="5"/>
-            </div>
+            <Header title={'Header'}
+            leftChild={<Button text={"Left"} />}
+            rightChild={<Button text={"Right"} />}/>
+            <Button
+                text={"123"}
+                type={""}
+                // onClick={}
+            />
+
+            <Button
+                text={"123"}
+                type={"POSITIVE"}
+                // onClick={}
+            />
+
+            <Button
+                text={"123"}
+                type={"NEGATIVE"}
+                // onClick={}
+            />
 
             <div className="">
                 <Link to={"/"}>Home</Link>
@@ -50,7 +65,6 @@ function App() {
                 <Route path="*" element={<NotFound/>}/>{/*  경로가 일치하지 않을 때*/}
             </Routes>
         </>
-
     );
 }
 
