@@ -75,7 +75,7 @@ function App() {
     }
 
     //기존 일기 수정
-    const onUpdate = (od, createDate, emotionId, content)=>{
+    const onUpdate = (id, createDate, emotionId, content)=>{
         dispatch(
             {
                 type: "UPDATE",
@@ -128,11 +128,10 @@ function App() {
             </div>
             <button onClick={onClickButton}>New 페이지로 이동</button>
 
-            <DiaryStateContext.Provider value={state}>
+            <DiaryStateContext.Provider value={data}>
                 <DiaryDispatchContext.Provider value={{
                     onCreate, onUpdate, onDelete
-                }
-                }>
+                }}>
                     <Routes>
                         <Route path="/" element={<Home/>}/>
                         <Route path="/new" element={<New/>}/>
