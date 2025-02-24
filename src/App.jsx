@@ -100,33 +100,6 @@ function App() {
 
     return (
         <>
-            <button onClick={()=>{
-                onCreate(new Date().getTime(), 1, "Hello");
-            }}>일기 추가 테스트</button>
-
-            <button onClick={()=>{
-                onUpdate(1, new Date().getTime(), 3, "수정된 일기입니다.");
-            }}>
-                일기 수정 테스트
-            </button>
-
-            <button onClick={()=>{
-                onDelete(1);
-            }}>
-                일기 삭제 테스트
-            </button>
-
-            <Header title={'Header'}
-            leftChild={<Button text={"Left"} />}
-            rightChild={<Button text={"Right"} />}/>
-
-            <div className="">
-                <Link to={"/"}>Home</Link>
-                <Link to={"/New"}>New</Link>
-                <Link to={"/diary/:id"}>Diary</Link>
-                <Link to={"/Edit/:id"}>Edit</Link>
-            </div>
-            <button onClick={onClickButton}>New 페이지로 이동</button>
 
             <DiaryStateContext.Provider value={data}>
                 <DiaryDispatchContext.Provider value={{
