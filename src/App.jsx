@@ -28,15 +28,27 @@ import { getEmotionImage } from "./util/get-emotion-image";
 const mockData = [
     {
         id:1,
-        createDate: new Date().getTime(),
+        createdDate: new Date("2025-02-06").getTime(),
         emotionId: 1,
         content: "1번 일기 내용"
     },
     {
         id:2,
-        createDate: new Date().getTime(),
+        createdDate: new Date("2025-03-05").getTime(),
         emotionId: 2,
         content: "2번 일기 내용"
+    },
+    {
+        id:3,
+        createdDate: new Date("2025-04-04").getTime(),
+        emotionId: 3,
+        content: "3번 일기 내용"
+    },
+    {
+        id:4,
+        createdDate: new Date("2025-04-05").getTime(),
+        emotionId: 3,
+        content: "4번 일기 내용"
     }
 ]
 function reducer(state, action){
@@ -54,8 +66,8 @@ function reducer(state, action){
     }
 }
 
-const DiaryStateContext = createContext();
-const DiaryDispatchContext = createContext();
+export const DiaryStateContext = createContext();
+export const DiaryDispatchContext = createContext();
 
 function App() {
     const [data, dispatch] = useReducer(reducer, mockData);
@@ -75,12 +87,12 @@ function App() {
     }
 
     //기존 일기 수정
-    const onUpdate = (id, createDate, emotionId, content)=>{
+    const onUpdate = (id, createdDate, emotionId, content)=>{
         dispatch(
             {
                 type: "UPDATE",
                     data: {
-                        id, createDate, emotionId, content
+                        id, createdDate, emotionId, content
                 }
             }
         )
@@ -100,7 +112,6 @@ function App() {
 
     return (
         <>
-
             <DiaryStateContext.Provider value={data}>
                 <DiaryDispatchContext.Provider value={{
                     onCreate, onUpdate, onDelete
