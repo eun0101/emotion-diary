@@ -1,5 +1,5 @@
 import './App.css';
-import {useReducer, useRef, createContext} from "react";
+import {useReducer, useRef, useEffect, useState, createContext} from "react";
 import {Routes, Route, Link, useNavigate} from "react-router-dom";
 import Home from './pages/Home';
 import New from './pages/New';
@@ -25,53 +25,85 @@ import { getEmotionImage } from "./util/get-emotion-image";
 //동적 경로 URL Parameter 뒤에 아이템의 id를 명시
 //Query string ? 뒤에 변수명과 값 명시 (검색어 등 자주 변경되는 값을 주소로 명시)
 
-const mockData = [
-    {
-        id:1,
-        createdDate: new Date("2025-02-06").getTime(),
-        emotionId: 1,
-        content: "1번 일기 내용"
-    },
-    {
-        id:2,
-        createdDate: new Date("2025-03-05").getTime(),
-        emotionId: 2,
-        content: "2번 일기 내용"
-    },
-    {
-        id:3,
-        createdDate: new Date("2025-04-04").getTime(),
-        emotionId: 3,
-        content: "3번 일기 내용"
-    },
-    {
-        id:4,
-        createdDate: new Date("2025-04-05").getTime(),
-        emotionId: 3,
-        content: "4번 일기 내용"
-    }
-]
 function reducer(state, action){
+    let nextState;
+
     switch(action.type){
-        case'CREATE':
-            return [action.data, ...state];
-        case 'UPDATE':
-            return state.map(item =>
+        case "INIT": {
+            //초기값을 불러왔으므로 nextState를 사용하지 않음
+            return action.data;
+            break;
+        }
+        case'CREATE': {
+            nextState = [action.data, ...state];
+            break;
+        };
+        case 'UPDATE':{
+            nextState = state.map(item =>
                 String(item.id) === String(action.data.id) ? action.data : item
-            );
-        case 'DELETE':
-            return state.filter(item => String(item.id) !== String(action.id));
+            )
+            break;
+        };
+        case 'DELETE': {
+            nextState = state.filter(item => String(item.id) !== String(action.id));
+            break;
+        }
         default:
             return state;
     }
+
+    localStorage.setItem('diary', JSON.stringify(nextState));
+    return nextState;
 }
 
 export const DiaryStateContext = createContext();
 export const DiaryDispatchContext = createContext();
 
 function App() {
-    const [data, dispatch] = useReducer(reducer, mockData);
-    const idRef = useRef(3);
+    const [isLoading, setIsLoading] = useState(true); //처음은 무조건 로딩 중이기 때문에 true
+    const [data, dispatch] = useReducer(reducer, []);
+    const idRef = useRef(0);
+
+    useEffect(()=>{
+        const storedData = localStorage.getItem('diary');
+        //값이 없다면 return
+        if (!storedData){
+            setIsLoading(false);
+            return;
+        }
+        const parsedData = JSON.parse(storedData);
+
+        if (!Array.isArray(parsedData)){
+            setIsLoading(false);
+            return;
+        }
+
+        let maxId = 0;
+        parsedData.forEach((item) => {
+            if (Number(item.id) > maxId){
+                maxId = Number(item.id);
+            }
+        })
+
+        idRef.current = maxId + 1;
+
+        dispatch({
+            type: "INIT",
+            data: parsedData
+        });
+        setIsLoading(false);
+    },[]);
+
+    //로컬 스토리지
+    // localStorage.setItem('key', 'value');
+    // localStorage.setItem('person', JSON.stringify({name: '정은아'}));
+
+    //데이터 가져오기
+    // console.log(localStorage.getItem("key"));
+    // console.log(JSON.parse(localStorage.getItem("person")));
+
+    //삭제
+    // localStorage.removeItem('person');
 
     //새로운 일기 추가
     const onCreate = (createdDate, emotionId, content) =>{
@@ -109,6 +141,11 @@ function App() {
     const onClickButton = ()=>{
         nav("/new"); //csr 방식. 특정 조건에 따라 페이지 이동
     };
+
+    //로딩되는 동안은 데이터 없는 컴포넌트들이 나오지 않도록, 로딩 화면을 띄움
+    if (isLoading) {
+        return <div>로딩중...</div>;
+    }
 
     return (
         <>
